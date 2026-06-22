@@ -1,0 +1,106 @@
+---
+title: "Contribution"
+description: "How to contribute to flutter_skin — setup, guidelines, and submitting changes."
+---
+
+`flutter_skin` is open source and contributions are welcome. This page covers everything you need to get the project running locally and submit your first pull request.
+
+## Repository
+
+The package source is hosted on GitHub:
+
+```
+https://github.com/koukibadr/flutter_skin
+```
+
+## Prerequisites
+
+- Flutter `>=3.0.0`
+- Dart `>=3.0.0`
+- Git
+
+## Local Setup
+
+<Steps>
+  <Step title="Fork and clone the repository">
+    Fork the repo on GitHub, then clone your fork:
+
+    ```bash
+    git clone https://github.com/your-username/flutter_skin.git
+    cd flutter_skin
+    ```
+  </Step>
+  <Step title="Install dependencies">
+    ```bash
+    flutter pub get
+    ```
+  </Step>
+  <Step title="Run the example app">
+    The `example/` folder contains a working Flutter app. To run it locally without an FSkin account, the package uses a mock server:
+
+    ```bash
+    cd example
+    flutter run
+    ```
+
+    <Note>
+      The example app points to `localhost:8080` in debug mode. No API key or FSkin account is needed to run it locally.
+    </Note>
+  </Step>
+  <Step title="Run the tests">
+    ```bash
+    flutter test
+    ```
+  </Step>
+</Steps>
+
+## Project Structure
+
+```
+flutter_skin/
+├── lib/
+│   ├── flutter_skin.dart       # public API entry point
+│   └── src/
+│       ├── fskin_client.dart   # HTTP fetch logic
+│       ├── skin_tokens.dart    # token model
+│       └── skin_provider.dart  # InheritedWidget
+├── example/                    # example Flutter app
+├── test/                       # unit and widget tests
+└── CHANGELOG.md
+```
+
+## Guidelines
+
+**Keep the package backend-agnostic.** The package communicates only with the dedicated backend — it has no direct Supabase dependency. Do not add any backend-specific imports or credentials.
+
+**No secrets in code.** The package must run locally with no API keys or accounts required. Use the mock skin key.
+
+**Match the existing code style.** Run the analyzer before submitting:
+
+```bash
+dart analyze
+dart format .
+```
+
+## Submitting a Pull Request
+
+1. Create a branch from `main`:
+   ```bash
+   git checkout -b feat/your-feature-name
+   ```
+2. Make your changes
+3. Run `flutter test` and `dart analyze` — both must pass
+4. Push and open a pull request against `main`
+5. Fill in the PR description with what changed and why
+
+<Tip>
+  For larger changes or new features, open an issue first to discuss the approach before writing code. This avoids wasted effort if the direction doesn't align with the roadmap.
+</Tip>
+
+## Reporting Issues
+
+Found a bug or have a feature request? Open an issue on GitHub:
+
+```
+https://github.com/koukibadr/flutter_skin/issues
+```

@@ -1,0 +1,92 @@
+---
+title: "Implementation"
+description: "Usage examples for flutter_skin — from basic setup to offline fallback."
+---
+
+This page covers the common patterns for using `flutter_skin` in your Flutter app.
+
+## Basic Usage
+
+The minimal setup — init once, apply once:
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterSkin.init(apiKey: 'fsk_your_api_key_here');
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: FlutterSkin.toThemeData(),
+      home: const HomePage(),
+    );
+  }
+}
+```
+
+`FlutterSkin.toThemeData()` converts your active skin into a Flutter `ThemeData` object. Every widget in your app that reads from the theme will automatically use the remote skin colors.
+
+## Offline Fallback
+
+Provide a fallback skin for the first launch, before any skin has been fetched from the server:
+
+```dart
+@override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: FlutterSkin.toThemeData(
+        fallbackTheme: ThemeData(
+          colorScheme: ColorScheme(
+            primary: Color(0xFF6C63FF),
+            secondary: Color(0xFFFF6584),
+            surface: Color(0xFFF9F9FB),
+            error: Color(0xFFEF4444),
+            onPrimary: Color(0xFFFFFFFF),
+            onSecondary: Color(0xFF000000),
+            onSurface: Color(0xFF1C1B1F),
+            onError: Color(0xFFFFFFFF),
+            brightness: Brightness.light,
+          ),
+        ),
+      ),
+      home: const MyHomePage(title: 'Movie Browser'),
+    );
+  }
+```
+
+<Tip>
+  After the first successful fetch, the skin is cached locally. On subsequent launches — even without a network connection — the cached skin is used automatically. The fallback only applies when no cache exists yet.
+</Tip>
+
+## Color Tokens Reference
+
+All color tokens available from the active skin:
+
+| Token | Flutter equivalent | Description |
+|---|---|---|
+| `colors.primary` | `ColorScheme.primary` | Main brand color |
+| `colors.secondary` | `ColorScheme.secondary` | Accent color |
+| `colors.background` | `ColorScheme.background` | Page background |
+| `colors.surface` | `ColorScheme.surface` | Card background |
+| `colors.error` | `ColorScheme.error` | Error states |
+| `colors.onPrimary` | `ColorScheme.onPrimary` | Text on primary |
+| `colors.onSecondary` | `ColorScheme.onSecondary` | Text on secondary |
+| `colors.onBackground` | `ColorScheme.onBackground` | Text on background |
+| `colors.onSurface` | `ColorScheme.onSurface` | Text on surface |
+| `colors.onError` | `ColorScheme.onError` | Text on error |
+| `colors.brightness` | `ThemeData.brightness` | `light` or `dark` |
+
+
+## Upcoming
+
+The following features are in development:
+
+- **Live push updates (SSE)** — skin changes broadcast instantly to open app instances without restart
+- **Typography tokens** — font family, sizes, and weights
+- **Spacing and radius tokens** — layout and component shape control

@@ -1,0 +1,116 @@
+---
+title: "Teams"
+description: "Teams let you share projects and collaborate with other developers. Every account starts with a default personal team."
+---
+
+**Teams** are the collaboration layer of FSkin. Projects live inside teams, and every member of a team can access the projects within it. You can create multiple teams for different apps, clients, or departments.
+
+## Default Team
+
+When you create your FSkin account, a **Default Team** is automatically created for you. This is your personal workspace — all solo projects go here by default.
+
+<Note>
+  The Default Team cannot be deleted, or have members added to it. It is always private and belongs only to you.
+  You can rename it (show us your creativity! 😀)
+</Note>
+
+## Creating a Team
+
+<Steps>
+  <Step title="Open Team Settings">
+    Navigate to **Team Settings** in the left sidebar and click **+ Add Team**.
+  </Step>
+  <Step title="Fill in team details">
+    Enter a team name, optional description, and choose the visibility:
+    - **Public** — visible to invited members.
+    - **Private** — for you only.
+  </Step>
+  <Step title="Confirm">
+    Click **Create**. You are automatically set as the **Owner**.
+  </Step>
+</Steps>
+
+<Warning>
+  Each account is limited to **3 teams** (including the Default Team) in the current alpha. This means you can create up to **2 additional teams**.
+</Warning>
+
+## Team Visibility
+
+| Type | Who can see it |
+|---|---|
+| **Public** | All assigned members |
+| **Private** | Only you, if you want to invite others you must change the visibility to Public |
+
+<Danger>
+  When a team is changed from **Public to Private**, all members except the owner are **immediately removed** from the team. This action cannot be undone.
+</Danger>
+
+## Permission Levels
+
+Members have one of four permission levels (Linux file permission values system, you get it I hope 😅):
+
+| Permission | Value | Read | Write (Projects & Skins) | Invite |
+|---|---|---|---|---|
+| **Owner** | 777 | ✓ | ✓ | ✓ |
+| **Admin** | 700 | ✓ | ✓ | — |
+| **Viewer** | 400 | ✓ | — | — |
+
+## Inviting Members
+
+Only the team **Owner** can send invitations.
+
+<Steps>
+  <Step title="Open Team Members panel">
+    Select your team → click **Team Members** on the right side panel.
+  </Step>
+  <Step title="Send an invitation">
+    Click **Invite Member**, enter the email address, and select a permission level.
+  </Step>
+  <Step title="Invitation is processed">
+    FSkin checks if the email is already registered:
+    - **Registered** — the developer is added to the team immediately.
+    - **Not registered** — the invitation stays pending. When they sign up, they are added automatically.
+  </Step>
+</Steps>
+
+<Tip>
+  Pending invitations are visible in the **Team Members** panel under **Pending Invitations**. You can revoke any pending invitation at any time.
+</Tip>
+
+## Transferring Ownership
+
+The team owner can transfer ownership to any existing team member. The current owner becomes an **Admin** after the transfer.
+
+1. Go to **Team Settings** → select the team
+2. Click **Transfer Ownership**
+3. Select the member to promote
+4. Confirm the transfer
+
+<Danger>
+  Ownership transfer is **permanent**. Make sure you select the correct member before confirming. You will be downgraded to Admin immediately.
+</Danger>
+
+## Removing a Member
+
+Only the **Owner** can remove members from a team.
+
+1. Open **Team Members** panel
+2. Click **⋯** next to the member
+3. Select **Remove from Team**
+
+<Note>
+  Removing a member revokes their access to all projects under that team immediately.
+</Note>
+
+## Deleting a Team
+
+Only the **Owner** can delete a team. Deleting a team removes all projects and skins within it permanently.
+
+1. Go to **Team Settings** → select the team → **⋯** menu → **Delete Team**
+2. Confirm the deletion
+
+<Danger>
+  Teams that have projects cannot be deleted. You must first delete all projects within the team or transfer them to another team, then you can delete the team itself. For more on deleting projects, see [Projects](/dashboard/projects).
+</Danger>
+
+For more on account-level requirements before deletion, see [Account Management](/dashboard/account).

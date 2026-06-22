@@ -1,0 +1,96 @@
+---
+title: "Installation"
+description: "Add flutter_skin to your Flutter project and connect it to the FSkin dashboard in minutes."
+---
+
+`flutter_skin` is a native Dart package that fetches and applies your published skin from the FSkin dashboard at runtime. It works on all Flutter platforms — Android, iOS, Web, macOS, Windows, and Linux.
+
+## Requirements
+
+- Flutter `>=3.0.0`
+- Dart `>=3.0.0`
+- An FSkin account with at least one project and an active skin.
+
+## Add the Package
+
+Add `flutter_skin` to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_skin: ^0.0.1
+```
+
+Then run:
+
+```bash
+flutter pub get
+```
+
+## Get Your API Key
+
+1. Log in to [app.fskin.dev](https://app.fskin.dev)
+2. Open your project → **API Keys** tab
+3. Copy the key — it starts with `fsk_`
+
+<Warning>
+  Store your API key securely. Avoid committing it directly to version control. Use environment variables or a secrets file excluded from git.
+</Warning>
+
+## Initialize the Package
+
+Call `FlutterSkin.init()` before `runApp` in your `main()` function:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_skin/flutter_skin.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await FlutterSkin.init(
+    apiKey: 'fsk_your_api_key_here',
+  );
+
+  runApp(const MyApp());
+}
+```
+
+## Apply the Skin
+
+Pass `FlutterSkin.toThemeData()` to your `MaterialApp`:
+
+```dart
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'My App',
+      theme: FlutterSkin.toThemeData(),
+      home: const HomePage(),
+    );
+  }
+}
+```
+
+That's it (Literally 2 lines of code, 2 seconds wasted 😎). Your app now fetches and applies the active skin from the FSkin dashboard on every launch.
+
+<Tip>
+  If the network is unavailable on launch, `flutter_skin` uses the last cached skin automatically. For the very first launch before any skin has been fetched, you can provide a fallback — see [Implementation](/package/implementation).
+</Tip>
+
+## Supported Platforms
+
+| Platform | Supported |
+|---|---|
+| Android | ✓ |
+| iOS | ✓ |
+| Web | ✓ |
+| macOS | ✓ |
+| Windows | ✓ |
+| Linux | ✓ |
+| Fuchsia | ✓ |
+| All Platforms | ✓ |

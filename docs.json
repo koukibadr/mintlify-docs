@@ -30,10 +30,9 @@
       {
         "group": "Package",
         "pages": [
-          "package/overview",
           "package/installation",
           "package/implementation",
-          "package/contributing"
+          "package/contribute"
         ]
       }
     ],
@@ -41,12 +40,12 @@
       "anchors": [
         {
           "anchor": "Package",
-          "href": "https://pub.dev/",
+          "href": "https://pub.dev/packages/flutter_skin",
           "icon": "cube"
         },
         {
           "anchor": "Github",
-          "href": "https://github.com/mintlify",
+          "href": "https://github.com/koukibadr/flutter_skin",
           "icon": "github"
         }
       ]

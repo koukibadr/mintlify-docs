@@ -1,0 +1,90 @@
+---
+title: "Skins"
+description: "Skins define your app's color scheme. Publish one from the dashboard and your Flutter app updates instantly — no release required."
+---
+
+A **skin** is a named set of color tokens that maps to Flutter's `ColorScheme`. When you publish a skin, every connected app fetches it on next launch and applies it automatically.
+
+## Creating a Skin
+
+<Steps>
+  <Step title="Open your project">
+    Navigate to **Projects**, select the project you want to add a skin to, then click **+ Create Skin**.
+  </Step>
+  <Step title="Name your skin">
+    Give the skin a descriptive name — for example `default`, `dark_pro`, or `summer_2026`. This name appears in the dashboard and in analytics.
+  </Step>
+  <Step title="Configure the colors">
+    Fill in the color tokens using hex values. FSkin follows the Material color scheme structure:
+
+    | Token | Description |
+    |---|---|
+    | `primary` | Main brand color |
+    | `secondary` | Accent / secondary color |
+    | `background` | Page background |
+    | `surface` | Card and container background |
+    | `error` | Error state color |
+    | `onPrimary` | Text and icons on primary |
+    | `onSecondary` | Text and icons on secondary |
+    | `onBackground` | Text and icons on background |
+    | `onSurface` | Text and icons on surface |
+    | `onError` | Text and icons on error |
+    | `brightness` | `light` or `dark` |
+  </Step>
+  <Step title="Save the skin">
+    Click **Save**. The skin is saved as a draft and won't affect your app until you publish it.
+  </Step>
+</Steps>
+
+<Tip>
+  Use the **Clone** action on any existing skin to create a variant without starting from scratch. Useful for creating a dark version of your default skin.
+</Tip>
+
+## Publishing a Skin
+
+Publishing makes a skin the **active** skin for the project. Your Flutter app will fetch this skin on next launch.
+
+1. Open the project you want to publish a skin for
+2. Click **Publish**
+3. Confirm the dialog
+4. This will publish the latest version of the currently active skin. To publish a different skin, first open that skin and set it active.
+
+<Warning>
+  Only one skin can be active per project at a time. Publishing a new skin automatically deactivates the previously active one.
+</Warning>
+
+<Info>
+Once published, any Flutter app using this project's API key will receive the new skin on next launch. Live push updates (SSE) are coming in an upcoming release — until then, changes take effect on app restart.
+</Info>
+
+## Skin JSON Format
+
+Under the hood, FSkin serves skins as a JSON file from the CDN. This is what your Flutter app fetches:
+
+```json
+{
+  "name": "default",
+  "version": 1,
+  "colors": {
+    "primary": "#6C63FF",
+    "secondary": "#FF6584",
+    "background": "#FFFFFF",
+    "surface": "#F9F9FB",
+    "error": "#EF4444",
+    "onPrimary": "#FFFFFF",
+    "onSecondary": "#000000",
+    "onBackground": "#0D0D0D",
+    "onSurface": "#1C1B1F",
+    "onError": "#FFFFFF",
+    "brightness": "light"
+  }
+}
+```
+
+<Note>
+  The current alpha supports **color tokens only**. Typography, spacing, border radii, elevation, and animation tokens are planned for upcoming releases.
+</Note>
+
+## Upcoming Features
+
+So many exciting features are in the works, just a bit of patience until we can share them 🥸.

@@ -1,0 +1,73 @@
+---
+title: "Projects"
+description: "Projects are the core unit of FSkin — each one holds your skins and connects your Flutter app to the dashboard."
+---
+
+A **project** represents a single Flutter application registered in FSkin. Every project holds multiple skins, has its own API keys, and belongs to a team — making it easy to share and collaborate with teammates.
+
+## Creating a Project
+
+<Steps>
+  <Step title="Open the Projects section">
+    Navigate to **Projects** in the left sidebar of your dashboard.
+  </Step>
+  <Step title="Create a new project">
+    Click **+ Add Project**, enter a name and an optional description, then confirm.
+  </Step>
+  <Step title="Copy your API key">
+    An API key is automatically generated for the project. Copy it from the **API Keys** tab — you'll need it to initialize `flutter_skin` in your app.
+  </Step>
+</Steps>
+
+<Warning>
+  Each team is limited to **3 projects** in the current alpha version. This limit will be increased in future releases.
+</Warning>
+
+## Project Structure
+
+Each project contains:
+
+| Resource | Description |
+|---|---|
+| **Skins** | Color schemes that your Flutter app fetches at runtime |
+| **API Keys** | Keys used by the `flutter_skin` package to authenticate |
+| **Active Skin** | The skin currently served to all connected apps |
+
+## API Keys
+
+When you create a project, FSkin automatically generates a default API key scoped to that project. A project can have multiple keys — useful when you want separate keys for development and production environments.
+
+<Tip>
+  Copy your API key immediately after creation. For security reasons, you won't be able to see the full key again after leaving the page. If you lose it, generate a new one and revoke the old one.
+</Tip>
+
+You can manage your keys at any time from **Projects → Select Project → API Keys**:
+
+- **Generate** a new key
+- **Revoke** a key to immediately block access
+- **View** last used timestamp to monitor activity
+
+<Warning>
+  API keys are tied to a specific project. A key from Project A cannot fetch skins from Project B.
+</Warning>
+
+## Team Sharing
+
+Projects belong to a team, not to an individual developer. Every member of the team can:
+
+- View and manage skins
+- Publish and roll back skin versions
+- Generate and revoke API keys
+
+Access is determined by the member's team permission level. See [Teams](/dashboard/teams) for the full permission breakdown.
+
+## Deleting a Project
+
+Deleting a project is **permanent**. All associated skins, API keys, and version history will be removed.
+
+1. Open the project → **⋯** menu → **Delete Project**
+2. Confirm the deletion
+
+<Danger>
+  Any Flutter app still using this project's API key will fail to fetch skins after deletion. Revoke the key first and update your app before proceeding.
+</Danger>
