@@ -1,35 +1,25 @@
 ---
 title: "Quickstart"
-description: "A production theme remote management solution for Flutter applications. all in few steps and 2 lines of code."
+description: "Remote skin management for Flutter. Live updates, no app restart. Up and running in 2 lines of code."
 ---
 
-Fskin is a Flutter package that allows you to easily manage and apply themes to your Flutter applications.
-With Fskin, you can create and customize skins for your app, and switch between them dynamically.
-
-All you need to do is create a project in the Fskin dashboard, create a skin, and then use the Fskin package in your Flutter app to apply the skin.
-Fskin will handle the rest, allowing you to focus on building your app without worrying about theme management.
+FSkin lets you manage your Flutter app's color scheme remotely. Publish a skin from the dashboard — your app updates instantly, no restart required.
 
 ## Prerequisites
 
-Before you begin, you must have:
-
-- Flutter SDK installed
-- A Flutter Skin dashboard account with API credentials
+- Flutter `>=3.0.0` installed
+- An FSkin account at [app.fskin.dev](https://app.fskin.dev)
 
 ## Get started
 
 <Steps>
-  <Step title="Add flutter_skin package">
-    Add the flutter_skin package to your Flutter project's `pubspec.yaml`:
-
+  <Step title="Add flutter_skin to your project">
     ```yaml
     dependencies:
       flutter:
         sdk: flutter
-      flutter_skin: ^0.0.1
+      flutter_skin: ^0.0.2
     ```
-
-    Then install the package:
 
     ```bash
     flutter pub get
@@ -37,52 +27,55 @@ Before you begin, you must have:
   </Step>
 
   <Step title="Create a project in the dashboard">
-    1. Log in to your Flutter Skin dashboard
-    2. Click "Create New Project" in the Projects section
-    3. Enter your project name
-    4. Click "Create"
+    1. Sign in at [app.fskin.dev](https://app.fskin.dev)
+    2. Navigate to **Projects** → **+ Add Project**
+    3. Enter a name and confirm
 
-    ![Dashboard Project Creation](placeholder-project-creation.png)
+    An API key is automatically generated for your project. Copy it from the **API Keys** tab.
   </Step>
 
-  <Step title="Create a skin and activate it">
-    1. Navigate to the Skins section
-    2. Click "Create New Skin"
-    3. Configure your skin theme and colors following the Material Color Scheme schema
-    4. Toggle "Active" to `true` to set it as the active skin
-    5. Click "Save"
+  <Step title="Create and publish a skin">
+    1. Open your project → **+ Create Skin**
+    2. Fill in your color tokens following the Material Color Scheme structure
+    3. Click **Publish**
 
-    ![Create and Activate Skin](placeholder-skin-creation.png)
-  </Step>
-
-  <Step title="Publish updates on the dashboard">
-    1. Review your project settings and active skin
-    2. Click "Publish" to make your updates live
-    3. Wait for the confirmation message
-  </Step>
-
-  <Step title="Retrieve API credentials">
-    1. Navigate to API Keys in your dashboard settings
-    2. Copy your API key related to your project. You'll need this to initialize the flutter_skin package in your app.
+    Your skin is now live and will be served to any connected Flutter app.
   </Step>
 
   <Step title="Initialize flutter_skin in your app">
-    Add the FlutterSkin initialization to your app's `main()` function:
+    Call `FlutterSkin.init()` before `runApp`, then wrap your `MaterialApp` in a `StatefulWidget` to react to live skin updates:
 
     ```dart
+    import 'package:flutter/material.dart';
+    import 'package:flutter_skin/flutter_skin.dart';
+
     void main() async {
       WidgetsFlutterBinding.ensureInitialized();
+
       await FlutterSkin.init(
-        apiKey: 'your_api_key_here',
+        apiKey: 'fsk_your_api_key_here',
+      );
+
       runApp(const MyApp());
     }
-    ```
 
-    Then apply the theme to your main app widget:
+    class MyApp extends StatefulWidget {
+      const MyApp({super.key});
 
-    ```dart
-    class MyApp extends StatelessWidget {
-      const MyApp({Key? key}) : super(key: key);
+      @override
+      State<MyApp> createState() => _MyAppState();
+    }
+
+    class _MyAppState extends State<MyApp> {
+      @override
+      void initState() {
+        super.initState();
+
+        // rebuild app instantly when a new skin is published
+        FlutterSkin.onSkinChanged.listen((_) {
+          if (mounted) setState(() {});
+        });
+      }
 
       @override
       Widget build(BuildContext context) {
@@ -94,12 +87,13 @@ Before you begin, you must have:
       }
     }
     ```
-
-    Your app will now use the active skin theme from the dashboard!
-    Every time you update the skin in the dashboard and publish it, your users will see the new theme without needing to update the app.
   </Step>
 </Steps>
 
 <Tip>
-  You can configure multiple skins for different themes, and switch between them in two clicks.
+  That's it (Literally 4 seconds). Publish a new skin from the dashboard — your app updates live without a restart, rebuild, or App Store release.
 </Tip>
+
+<Note>
+  `FlutterSkin.init()` opens a persistent SSE connection to the FSkin backend. When you publish a skin, the event is pushed to all connected app instances in real time. The connection is automatically paused when the app is backgrounded and resumed when it comes back to the foreground.
+</Note>

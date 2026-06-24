@@ -1,9 +1,9 @@
 ---
 title: "Skins"
-description: "Skins define your app's color scheme. Publish one from the dashboard and your Flutter app updates instantly — no release required."
+description: "Skins define your app's color scheme. Publish one from the dashboard and every connected Flutter app updates instantly — no restart required."
 ---
 
-A **skin** is a named set of color tokens that maps to Flutter's `ColorScheme`. When you publish a skin, every connected app fetches it on next launch and applies it automatically.
+A **skin** is a named set of color tokens that maps to Flutter's `ColorScheme`. When you publish a skin, the FSkin backend pushes the change to all connected app instances via SSE. Apps update in real time — no restart, no re-fetch, no App Store release.
 
 ## Creating a Skin
 
@@ -12,7 +12,7 @@ A **skin** is a named set of color tokens that maps to Flutter's `ColorScheme`. 
     Navigate to **Projects**, select the project you want to add a skin to, then click **+ Create Skin**.
   </Step>
   <Step title="Name your skin">
-    Give the skin a descriptive name — for example `default`, `dark_pro`, or `summer_2026`. This name appears in the dashboard and in analytics.
+    Give the skin a descriptive name — for example `default`, `dark_pro`, or `summer_2026`.
   </Step>
   <Step title="Configure the colors">
     Fill in the color tokens using hex values. FSkin follows the Material color scheme structure:
@@ -42,24 +42,40 @@ A **skin** is a named set of color tokens that maps to Flutter's `ColorScheme`. 
 
 ## Publishing a Skin
 
-Publishing makes a skin the **active** skin for the project. Your Flutter app will fetch this skin on next launch.
+Publishing makes a skin the **active** skin for the project and immediately pushes the update to all connected Flutter apps.
 
-1. Open the project you want to publish a skin for
-2. Click **Publish**
-3. Confirm the dialog
-4. This will publish the latest version of the currently active skin. To publish a different skin, first open that skin and set it active.
+1. Open the skin you want to publish
+2. Review the color tokens
+3. Click **Publish**
+4. Confirm the dialog
 
 <Warning>
   Only one skin can be active per project at a time. Publishing a new skin automatically deactivates the previously active one.
 </Warning>
 
-<Info>
-Once published, any Flutter app using this project's API key will receive the new skin on next launch. Live push updates (SSE) are coming in an upcoming release — until then, changes take effect on app restart.
-</Info>
+### What happens when you publish
+
+```
+You click Publish
+        ↓
+Skin is marked active in the database
+        ↓
+FSkin backend detects the change via Supabase Realtime
+        ↓
+Backend broadcasts SSE event to all connected Flutter apps
+        ↓
+flutter_skin re-fetches the active skin
+        ↓
+App re-renders with new colors — no restart needed
+```
+
+<Note>
+  The update reaches connected apps in approximately **1–2 seconds** after you click Publish. Apps that are backgrounded or closed will receive the new skin on next launch via the normal fetch.
+</Note>
 
 ## Skin JSON Format
 
-Under the hood, FSkin serves skins as a JSON file from the CDN. This is what your Flutter app fetches:
+Under the hood, FSkin serves skins as a JSON file. This is what the backend delivers to the Flutter package:
 
 ```json
 {
@@ -84,7 +100,3 @@ Under the hood, FSkin serves skins as a JSON file from the CDN. This is what you
 <Note>
   The current alpha supports **color tokens only**. Typography, spacing, border radii, elevation, and animation tokens are planned for upcoming releases.
 </Note>
-
-## Upcoming Features
-
-So many exciting features are in the works, just a bit of patience until we can share them 🥸.

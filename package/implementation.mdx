@@ -1,72 +1,126 @@
 ---
 title: "Implementation"
-description: "Usage examples for flutter_skin — from basic setup to offline fallback."
+description: "Usage examples for flutter_skin — live skin updates, offline fallback, and lifecycle management."
 ---
 
-This page covers the common patterns for using `flutter_skin` in your Flutter app.
+This page covers the common patterns for using `flutter_skin` in your Flutter app, including the live update setup that pushes skin changes to your app in real time.
 
-## Basic Usage
+## Basic Setup with Live Updates
 
-The minimal setup — init once, apply once:
+This is the recommended setup. The `StatefulWidget` wrapper listens to `onSkinChanged` and rebuilds the app instantly when a new skin is published from the dashboard:
 
 ```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_skin/flutter_skin.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterSkin.init(apiKey: 'fsk_your_api_key_here');
+
+  await FlutterSkin.init(
+    apiKey: 'fsk_your_api_key_here',
+  );
+
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+
+    // rebuild MaterialApp instantly when a new skin is published
+    FlutterSkin.onSkinChanged.listen((_) {
+      if (mounted) setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: FlutterSkin.toThemeData(),
+      title: 'My App',
+      theme: FlutterSkin.toThemeData(), // always returns the latest active skin
       home: const HomePage(),
     );
   }
 }
 ```
 
-`FlutterSkin.toThemeData()` converts your active skin into a Flutter `ThemeData` object. Every widget in your app that reads from the theme will automatically use the remote skin colors.
+<Note>
+  The `setState(() {})` in `onSkinChanged.listen` is what triggers `MaterialApp` to rebuild with the new `ThemeData`. Without it, the skin updates internally but the UI doesn't repaint.
+</Note>
+
+## How Live Updates Work
+
+`FlutterSkin.init()` opens a persistent SSE (Server-Sent Events) connection to the FSkin backend alongside the initial skin fetch. The connection is lightweight — lighter than any analytics SDK or crash reporter.
+
+```
+FlutterSkin.init() called
+        ↓
+Initial skin fetched and applied
+        ↓
+SSE connection opened to FSkin backend
+        ↓ (later, when you publish from dashboard)
+Backend pushes "skin_updated" event
+        ↓
+flutter_skin re-fetches active skin
+        ↓
+onSkinChanged stream emits
+        ↓
+setState() → MaterialApp rebuilds → app repaints
+```
+
+## App Lifecycle Management
+
+The SSE connection is automatically managed based on app lifecycle. You don't need to do anything — this is handled internally by `FlutterSkin`:
+
+| App state | SSE connection | Behavior |
+|---|---|---|
+| Foreground | Connected | Live updates delivered |
+| Backgrounded | Disconnected | Zero battery cost |
+| Resumed | Reconnected | Re-fetches latest skin + reconnects |
+| Closed | N/A | Gets latest skin on next launch |
+
+<Tip>
+  If a skin was published while the app was backgrounded or closed, the user gets the latest skin automatically on next launch via the normal fetch — no missed updates.
+</Tip>
 
 ## Offline Fallback
 
-Provide a fallback skin for the first launch, before any skin has been fetched from the server:
+Provide a fallback skin for the first launch, before any skin has been fetched:
 
 ```dart
-@override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: FlutterSkin.toThemeData(
-        fallbackTheme: ThemeData(
-          colorScheme: ColorScheme(
-            primary: Color(0xFF6C63FF),
-            secondary: Color(0xFFFF6584),
-            surface: Color(0xFFF9F9FB),
-            error: Color(0xFFEF4444),
-            onPrimary: Color(0xFFFFFFFF),
-            onSecondary: Color(0xFF000000),
-            onSurface: Color(0xFF1C1B1F),
-            onError: Color(0xFFFFFFFF),
-            brightness: Brightness.light,
-          ),
-        ),
-      ),
-      home: const MyHomePage(title: 'Movie Browser'),
-    );
-  }
+await FlutterSkin.init(
+  apiKey: 'fsk_your_api_key_here',
+  fallback: SkinTokens(
+    colors: ColorTokens(
+      primary: Color(0xFF6C63FF),
+      secondary: Color(0xFFFF6584),
+      background: Color(0xFFFFFFFF),
+      surface: Color(0xFFF9F9FB),
+      error: Color(0xFFEF4444),
+      onPrimary: Color(0xFFFFFFFF),
+      onSecondary: Color(0xFF000000),
+      onBackground: Color(0xFF0D0D0D),
+      onSurface: Color(0xFF1C1B1F),
+      onError: Color(0xFFFFFFFF),
+      brightness: Brightness.light,
+    ),
+  ),
+);
 ```
 
 <Tip>
-  After the first successful fetch, the skin is cached locally. On subsequent launches — even without a network connection — the cached skin is used automatically. The fallback only applies when no cache exists yet.
+  After the first successful fetch, the skin is cached locally. On subsequent launches — even without a network connection — the cached skin is used. The fallback only applies on the very first launch before any cache exists.
 </Tip>
 
 ## Color Tokens Reference
-
-All color tokens available from the active skin:
 
 | Token | Flutter equivalent | Description |
 |---|---|---|
@@ -82,11 +136,8 @@ All color tokens available from the active skin:
 | `colors.onError` | `ColorScheme.onError` | Text on error |
 | `colors.brightness` | `ThemeData.brightness` | `light` or `dark` |
 
-
 ## Upcoming
 
-The following features are in development:
-
-- **Live push updates (SSE)** — skin changes broadcast instantly to open app instances without restart
 - **Typography tokens** — font family, sizes, and weights
-- **Spacing and radius tokens** — layout and component shape control
+- **Spacing and radius tokens** — layout and component shape
+- **A/B testing** — serve different skins to different user segments
